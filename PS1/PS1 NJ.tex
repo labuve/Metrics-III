@@ -1,0 +1,121 @@
+\documentclass[]{article}
+\usepackage{amsmath, amsfonts}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{cancel}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{dcolumn}
+\usepackage{mathtools}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{cleveref}
+\usepackage{titlesec}
+\usepackage[para,online,flushleft]{threeparttable}
+
+%opening
+\title{Problem Set I \\ \large Econometrics III}
+\author{Nurfatima Jandarova}
+\date{\today}
+\pagestyle{fancy}
+
+\lhead{Econometrics III, Problem Set I}
+\rhead{Nurfatima Jandarova}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyheadoffset{1 cm}
+
+\geometry{a4paper, left=30mm, top=30mm, bottom = 20mm, headheight=20mm}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\renewcommand{\thesubsubsection}{\textbf{(\alph{subsubsection})}}
+\titleformat{\subsubsection}[runin]
+{\normalfont\normalsize}{\thesubsubsection}{1em}{}
+
+% Square brackets
+\DeclareMathOperator{\rank}{rank}
+\makeatletter
+\newenvironment{sqcases}{%
+	\matrix@check\sqcases\env@sqcases
+}{%
+	\endarray\right.%
+}
+\def\env@sqcases{%
+	\let\@ifnextchar\new@ifnextchar
+	\left\lbrack
+	\def\arraystretch{1.2}%
+	\array{@{}l@{\quad}l@{}}%
+}
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+\subsection*{Exercise 2}
+\begin{table}[h]
+	\begin{center}
+		\begin{threeparttable}
+			\begin{tabular}{c|ccccc}
+				Regressors & \multicolumn{3}{c}{OLS} & IV & 2SLS (manual) \\
+						& (1) 		& (2) 		& (3) 		& (4) 		& (5) 		\\ \hline
+				$x_1$ 	& 0.4342 	&  			&  			&  			&  			\\
+						& (0.0240) 	& 			&  			&  			&  			\\
+				$x_2$ 	&  			& 0.2206 	&  			&  			&  			\\
+						&  			& (0.0167) 	&  			&  			&  			\\
+				$x_3$ 	&  			&  			& 0.1496 	& 1.0095 	& 1.0095 	\\
+						&			&  			& (0.0136) 	& (0.0613) 	& (0.0511) 	\\
+				Constant& 0.2756 	& 0.3826 	& 0.4192 	& 0.0001 	& 0.0001 	\\
+						& (0.0158) 	& (0.0133) 	& (0.0123) 	& (0.0323) 	& (0.0269) 
+			\end{tabular}
+			\begin{tablenotes}
+				\textit{Note: }Dependent variable is $y$. Standard errors reported in parentheses. In an IV regression $x_3$ was instrumented by $x_1$ and $x_2$.
+			\end{tablenotes}
+		\end{threeparttable}
+	\end{center}
+	\caption{Regression results}
+	\label{tab:ex2regres}
+\end{table}
+
+The presence of measurement errors creates attenuation bias as is evidenced from \Cref{tab:ex2regres}; and the larger the measurement error, the larger is the magnitude of the bias. However, running an IV regression of $y$ on $x_3$, which was instrumented by $x_1$ and $x_2$, vastly improved the estimate of the coefficient, bringing it much closer to the true value. The p-value of the Wald test that an IV coefficient is equal to 1 was 0.8771. Hence, we fail to reject the null hypothesis and may conclude that an IV coefficient is indeed equal to the true coefficient.
+
+Performing the two-stage least squares manually (5th column of \Cref{tab:ex2regres}) results in the same point estimate; however, with lower standard errors as anticipated. Regressing $y$ on $\hat{x}_3$ is not the same as regressing $y$ on $x_3$ because by fitting the value of $x_3$ we are throwing away part of the variation in the regressor. Hence, the correct standard deviation should be adjusted upwards as in 4th column (done automatically by the command \textit{ivregress}).
+
+It's better to use both $x_2$ and $x_3$ because their combination allows to eliminate the attenuation bias in the asymptotics, i.e., yields consistent estimator for $\beta$. Whereas using $x_1$ alone, one gets inconsistent estimator, even though, the associated measurement error is the smallest of the three.
+
+Consider first the regression of $y$ on $x_1$ alone. The resulting estimator is inconsistent:
+\begin{equation}
+	\begin{split}
+		y_i& = \phi x_{1i} + \nu_i \\ \nonumber
+		\hat{\phi}& = \frac{\frac{1}{n}\sum\limits_{i = 1}^nx_{1i}y_i}{\frac{1}{n}\sum\limits_{i = 1}^nx_{1i}^2} \overset{p}{\longrightarrow}\frac{\mathbb{E}(x_iy_i)}{\mathbb{E}(x_{i}^2) + \mathbb{E}(v_{1i}^2)} \neq \beta
+	\end{split}
+\end{equation}
+However, if we use 2SLS using $x_2$ as an instrument for $x_3$, we obtain a consistent estimator for $\beta$:
+
+\begin{equation}
+	\begin{split}
+		\intertext{First-stage regression}
+		x_{3i}& = \gamma x_{2i} + \varepsilon_{1i} \\ \nonumber
+		\hat{\gamma}& = \frac{\sum\limits_{i = 1}^n x_{2i}x_{3i}}{\sum\limits_{i = 1}^n x_{2i}^2} = \frac{\sum\limits_{i = 1}^n (x_i + v_{2i})(x_i + v_{3i})}{\sum\limits_{i = 1}^n (x_i + v_{2i})^2}\overset{p}{\longrightarrow} \frac{\mathbb{E}(x_i^2)}{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}^2)}
+		\intertext{Second-stage regression}
+		y_i& = \alpha\hat{x}_{3i} + \varepsilon_{2i} = \alpha\hat{\gamma}x_{2i} + \varepsilon_{2i} \\
+		\hat{\alpha}& = \frac{\sum\limits_{i = 1}^n\hat{x}_{3i}y_i}{\sum\limits_{i = 1}^n\hat{x}_{3i}^2} = \frac{\sum\limits_{i = 1}^n\hat{\gamma}x_{2i}y_i}{\sum\limits_{i = 1}^n(\hat{\gamma}x_{2i})^2} = \frac{1}{\hat{\gamma}}\frac{\sum\limits_{i = 1}^nx_{2i}y_i}{\sum\limits_{i = 1}^nx_{2i}^2} \overset{p}{\longrightarrow}\frac{\cancel{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}^2)}}{\mathbb{E}(x_i^2)}\frac{\mathbb{E}(x_iy_i)}{\cancel{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}^2)}} = \frac{\mathbb{E}(x_iy_i)}{\mathbb{E}(x_i^2)} = \beta
+	\end{split}
+\end{equation}
+
+However, if the two measurement errors, $v_{2i}$ and $v_{3i}$ were correlated, then the optimal choice depends on the magnitude of correlation relative to the magnitude of the first measurement error. In presence of correlation between the measurement errors, the probability limits of the coefficients from 2SLS are different:
+
+\begin{equation}
+	\begin{split}
+		\hat{\gamma}& = \frac{\sum\limits_{i = 1}^n (x_i + v_{2i})(x_i + v_{3i})}{\sum\limits_{i = 1}^n (x_i + v_{2i})^2}\overset{p}{\longrightarrow} \frac{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}v_{3i})}{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}^2)} \\ \nonumber
+		\hat{\alpha}& = \frac{1}{\hat{\gamma}}\frac{\sum\limits_{i = 1}^n(x_i + v_{2i})y_i}{\sum\limits_{i = 1}^n(x_i + v_{2i})^2} \overset{p}{\longrightarrow}\frac{\cancel{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}^2)}}{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}v_{3i})}\frac{\mathbb{E}(x_iy_i)}{\cancel{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}^2)}} = \frac{\mathbb{E}(x_iy_i)}{\mathbb{E}(x_i^2) + \mathbb{E}(v_{2i}v_{3i})}
+	\end{split}
+\end{equation}
+Hence, whenever $\mathbb{E}(v_{2i}v_{3i})\leq\mathbb{E}(v_{1i}^2)$, the combination of the two measurement errors would still be preferable than to just using $x_{1i}$ alone. On the other hand, if the errors $v_{2i}$ and $v_{3i}$ are highly correlated, using $x_{1i}$ alone would be better.
+\end{document}
