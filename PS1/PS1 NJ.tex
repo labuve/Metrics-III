@@ -58,6 +58,29 @@
 
 \maketitle
 
+\subsection*{Exercise 1}
+\subsubsection{}
+The LS estimate of $\alpha_3$:
+\begin{equation}
+	\hat{\alpha}_3 = \frac{\sum\limits_{i = 1}^ny_1y_2}{\sum\limits_{i = 1}^ny_1^2} = \frac{5}{110} = \frac{1}{22} \nonumber
+\end{equation}
+The 2SLS estimate of $\alpha_3$:
+\begin{equation}
+	\begin{split}
+		\intertext{First, estimate}
+		y_1& = \gamma x + \varepsilon = \frac{\alpha_2}{1 - \alpha_1\alpha_3}x + \frac{u_1 + \alpha_1u_2}{1 - \alpha_1\alpha_3} \\ \nonumber
+		\hat{\gamma}& = \frac{\sum\limits_{i = 1}^nx_iy_{1i}}{\sum\limits_{i = 1}^nx_i^2} = \frac{120}{360} = \frac{1}{3}
+		\intertext{Now, regress $y_2$ on the fitted value of $y_1$}
+		\hat{\alpha}_3& = \frac{\sum\limits_{i = 1}^n\hat{\gamma}x_iy_{2i}}{\sum\limits_{i = 1}^n(\hat{\gamma}x_i)^2} = \frac{1}{\hat{\gamma}}\frac{\sum\limits_{i = 1}^nx_iy_{2i}}{\sum\limits_{i = 1}^nx_i^2} = 3\frac{120}{360} = 1
+	\end{split}
+\end{equation}
+
+\subsubsection{}
+Yes, I could obtain estimates of $\alpha_1$ and $\alpha_2$ yb applying the 2SLS in the other direction. I first estimate $y_2 = \underbrace{\frac{\alpha_3\alpha_2}{1 - \alpha_1\alpha_3}}_{\beta}x + \frac{\alpha_3u_1 + u_2}{1 - \alpha_1\alpha_3}$ and obtain an estimate $\hat{\beta}$. Then, I regress $y_1$ on $\hat{y_2}$ and $x$ to get estimates of $\alpha_1$ and $\alpha_2$.
+
+\subsubsection{}
+We should use the estimate of $\alpha_3$ obtained by 2SLS as it removes the endogeneity issue. So, using the result above, where we found $\hat{\alpha}_3 = 1$, the predicted value of $y_2$ is $\hat{\alpha}_355 = 55$. 
+
 \subsection*{Exercise 2}
 \begin{table}[h]
 	\begin{center}
