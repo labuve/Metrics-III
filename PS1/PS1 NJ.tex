@@ -76,10 +76,17 @@ The 2SLS estimate of $\alpha_3$:
 \end{equation}
 
 \subsubsection{}
-Yes, I could obtain estimates of $\alpha_1$ and $\alpha_2$ yb applying the 2SLS in the other direction. I first estimate $y_2 = \underbrace{\frac{\alpha_3\alpha_2}{1 - \alpha_1\alpha_3}}_{\beta}x + \frac{\alpha_3u_1 + u_2}{1 - \alpha_1\alpha_3}$ and obtain an estimate $\hat{\beta}$. Then, I regress $y_1$ on $\hat{y_2}$ and $x$ to get estimates of $\alpha_1$ and $\alpha_2$.
+No. If one tries to apply 2SLS in the other direction, i.e., first estimate $\hat{\beta}$ from $y_2 = \underbrace{\frac{\alpha_3\alpha_2}{1 - \alpha_1\alpha_3}}_{\beta}x + \frac{\alpha_3u_1 + u_2}{1 - \alpha_1\alpha_3}$ and then regress $y_1$ on $\hat{y}_2$ and $x$, there is an issue of multicollinearity since $\hat{y}_2 = \hat{\beta}x$. If, on the other hand, one estimates the following equations
+\begin{equation}
+	\begin{split}
+		y_1 = \frac{\alpha_2}{1 - \alpha_1\alpha_3}x + \frac{u_1 + \alpha_1u_2}{1 - \alpha_1\alpha_3}\\\nonumber
+		y_2 = \frac{\alpha_2\alpha_3}{1 - \alpha_1\alpha_3}x + \frac{u_2 + \alpha_3u_1}{1 - \alpha_1\alpha_3}
+	\end{split}
+\end{equation}
+the estimated coefficients in front of $x$ could only help to recover $\alpha_3$, but not $\alpha_1$ or $\alpha_2$.
 
 \subsubsection{}
-We should use the estimate of $\alpha_3$ obtained by 2SLS as it removes the endogeneity issue. So, using the result above, where we found $\hat{\alpha}_3 = 1$, the predicted value of $y_2$ is $\hat{\alpha}_355 = 55$. 
+We should use the estimate of $\alpha_3$ obtained by 2SLS as it removes the endogeneity issue. So, using the result above, where we found $\hat{\alpha}_3 = 1$, the predicted value is $\hat{y}_2 = \hat{\alpha}_355 = 55$. 
 
 \subsection*{Exercise 2}
 \begin{table}[h]
@@ -110,7 +117,7 @@ The presence of measurement errors creates attenuation bias as is evidenced from
 
 Performing the two-stage least squares manually (5th column of \Cref{tab:ex2regres}) results in the same point estimate; however, with lower standard errors as anticipated. Regressing $y$ on $\hat{x}_3$ is not the same as regressing $y$ on $x_3$ because by fitting the value of $x_3$ we are throwing away part of the variation in the regressor. Hence, the correct standard deviation should be adjusted upwards as in 4th column (done automatically by the command \textit{ivregress}).
 
-It's better to use both $x_2$ and $x_3$ because their combination allows to eliminate the attenuation bias in the asymptotics, i.e., yields consistent estimator for $\beta$. Whereas using $x_1$ alone, one gets inconsistent estimator, even though, the associated measurement error is the smallest of the three.
+It's better to use both $x_2$ and $x_3$ because their combination allows to eliminate the attenuation bias in the asymptotics, i.e., yields consistent estimator for $\beta$. This is due to the fact that both variables only share common information on the true value of $x$, while the measurement errors are independent of each other. Whereas using $x_1$ alone, one gets inconsistent estimator, even though, the associated measurement error is the smallest of the three.
 
 Consider first the regression of $y$ on $x_1$ alone. The resulting estimator is inconsistent:
 \begin{equation}
@@ -119,8 +126,7 @@ Consider first the regression of $y$ on $x_1$ alone. The resulting estimator is 
 		\hat{\phi}& = \frac{\frac{1}{n}\sum\limits_{i = 1}^nx_{1i}y_i}{\frac{1}{n}\sum\limits_{i = 1}^nx_{1i}^2} \overset{p}{\longrightarrow}\frac{\mathbb{E}(x_iy_i)}{\mathbb{E}(x_{i}^2) + \mathbb{E}(v_{1i}^2)} \neq \beta
 	\end{split}
 \end{equation}
-However, if we use 2SLS using $x_2$ as an instrument for $x_3$, we obtain a consistent estimator for $\beta$:
-
+However, if we use 2SLS using $x_2$ as an instrument for $x_3$ (or the other way around), we obtain a consistent estimator for $\beta$, as is shown below.
 \begin{equation}
 	\begin{split}
 		\intertext{First-stage regression}
@@ -132,7 +138,7 @@ However, if we use 2SLS using $x_2$ as an instrument for $x_3$, we obtain a cons
 	\end{split}
 \end{equation}
 
-However, if the two measurement errors, $v_{2i}$ and $v_{3i}$ were correlated, then the optimal choice depends on the magnitude of correlation relative to the magnitude of the first measurement error. In presence of correlation between the measurement errors, the probability limits of the coefficients from 2SLS are different:
+However, if the two measurement errors, $v_{2i}$ and $v_{3i}$ were correlated, then the optimal choice depends on the magnitude of correlation relative to the magnitude of the first measurement error. Probability limits of first- and second-stage estimators under the assumption of correlated measurement errors are illustrated below.
 
 \begin{equation}
 	\begin{split}
