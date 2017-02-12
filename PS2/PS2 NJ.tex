@@ -1,0 +1,130 @@
+\documentclass[]{article}
+\usepackage{amsmath, amsfonts}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{cancel}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{dcolumn}
+\usepackage{mathtools}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{cleveref}
+\usepackage{titlesec}
+\usepackage{slashbox}
+\usepackage[para,online,flushleft]{threeparttable}
+
+%opening
+\title{Problem Set II \\ \large Econometrics III}
+\author{Nurfatima Jandarova}
+\date{\today}
+\pagestyle{fancy}
+
+\lhead{Econometrics III, Problem Set II}
+\rhead{Nurfatima Jandarova}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyheadoffset{1 cm}
+
+\geometry{a4paper, left=30mm, top=30mm, bottom = 20mm, headheight=20mm}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\renewcommand{\thesubsection}{Exercise \arabic{subsection}}
+\renewcommand{\thesubsubsection}{\textbf{(\alph{subsubsection})}}
+\titleformat{\subsubsection}[runin]
+{\normalfont\normalsize}{\thesubsubsection}{1em}{}
+
+\begin{document}
+
+\maketitle
+
+\subsection{}
+\subsubsection{}
+The likelihood and log-likelihood functions are:
+\begin{equation}
+	\begin{split}
+		L(x_i; \alpha, \beta)& = \prod\limits_{i = 1}^{n}\alpha\beta x_i^{\beta - 1}\exp(-\alpha x_i^\beta) \\ \nonumber
+		\mathcal{L}(x_i; \alpha, \beta)& = \sum\limits_{i = 1}^n\ln\left[\alpha\beta x_i^{\beta - 1}\exp(-\alpha x_i^\beta)\right] = n\ln\alpha + n\ln\beta + (\beta - 1)\sum\limits_{i = 1}^n\ln x_i - \alpha\sum\limits_{i = 1}^n x_i^\beta
+	\end{split}
+\end{equation}
+
+\subsubsection{}
+The FOCs are
+\begin{equation}
+	\begin{split}
+		\begin{cases}
+			\frac{n}{\hat{\alpha}} - \sum\limits_{i = 1}^n x_i^{\hat{\beta}} = 0 \\
+			\frac{n}{\hat{\beta}} + \sum\limits_{i = 1}^n\ln x_i - \hat{\alpha}\sum\limits_{i = 1}^n x_i^{\hat{\beta}}\ln x_i = 0
+		\end{cases} \Rightarrow \begin{cases}
+			\hat{\alpha} = \frac{n}{\sum\limits_{i = 1}^n x_i^{\hat{\beta}}} \\
+			\frac{n}{\hat{\beta}} + \sum\limits_{i = 1}^n\ln x_i - \frac{n\sum\limits_{i = 1}^n x_i^{\hat{\beta}}\ln x_i}{\sum\limits_{i = 1}^n x_i^{\hat{\beta}}} = 0
+		\end{cases}\nonumber
+	\end{split}
+\end{equation}
+We could use numerical methods to find the solution {\Huge continue!}
+
+\subsubsection{}
+Recall that with information equality the asymptotic variance of the ML estimator is the minus inverse of the Hessian. The Hessian is
+\begin{equation}
+	\begin{split}
+		H = \begin{bmatrix}
+			-\frac{n}{\alpha^2} & -\sum\limits_{i = 1}^nx_i^\beta\ln x_i \\
+			-\sum\limits_{i = 1}^nx_i^\beta\ln x_i & -\frac{n}{\beta^2} - \alpha\sum\limits_{i = 1}^nx_i^\beta(\ln x_i)^2
+		\end{bmatrix} \nonumber
+	\end{split}
+\end{equation}
+Hence, I would substitute the ML estimators from the previous part and find the inverse of the matrix. The negative of the resulting matrix would be my estimate of the asymptotic variance matrix of the ML estimators.
+
+\subsection{}
+
+\begin{table}[h]
+	\begin{center}
+		\begin{threeparttable}
+			\begin{subtable}{.5\linewidth}
+				\centering
+				\begin{tabular}{c|cccc}
+					\backslashbox[10mm]{$\pi_0$}{n} & 50 & 100 & 500 & 1000 \\ \hline
+					1 & 0.0708    & 0.0662  & 0.0626 & 0.0629 \\
+					$\frac{1}{6}$ & 0.2451    & 0.2443  & 0.2396 & 0.2383
+				\end{tabular}
+				\caption{OLS}
+			\end{subtable}~~~~~
+			\begin{subtable}{.5\linewidth}
+				\centering
+				\begin{tabular}{c|cccc}
+					\backslashbox[10mm]{$\pi_0$}{n} & 50 & 100 & 500 & 1000 \\ \hline
+					1 & 0.0203    & 0.0105  & 0.0021 & 0.0010 \\
+					$\frac{1}{6}$ & 1573.5377 & 13.7510 & 0.1190 & 0.0413
+				\end{tabular}
+				\caption{IV}
+			\end{subtable}
+%			\begin{tablenotes}
+%				\textit{Note: }Dependent variable is $y$. Standard errors reported in parentheses. In an IV regression $x_3$ was instrumented by $x_1$ and $x_2$.
+%			\end{tablenotes}
+		\end{threeparttable}
+	\end{center}
+	\caption{MSE of estimators across simulations}
+	\label{tab:ex2MSE}
+\end{table}
+{\Huge COMMENT!!!}
+
+\begin{equation}
+	\begin{split}
+		\hat{\beta}^{OLS} - \beta_0 &= \sigma_u\frac{\sum\limits_{i = 1}^nx_iu_i}{\sum\limits_{i = 1}^nx_i^2} = \sigma_u\frac{\sum\limits_{i = 1}^n(\pi_0w_i + \sigma_vv_i)u_i}{\sum\limits_{i = 1}^n(\pi_0w_i + \sigma_vv_i)^2} = \sigma_u\frac{\pi_0\frac{1}{n}\sum\limits_{i = 1}^nw_iu_i + \sigma_v\frac{1}{n}\sum\limits_{i = 1}^nv_iu_i}{\pi_0^2\cancelto{1}{\frac{1}{n}\sum\limits_{i = 1}^nw_i^2} + 2\pi_0\sigma_v\frac{1}{n}\sum\limits_{i = 1}^nw_iv_i + \sigma_v^2\frac{1}{n}\sum\limits_{i = 1}^nv_i^2}\nonumber \\
+		\text{by WLLN: }&\frac{1}{n}\sum\limits_{i = 1}^nw_iu_i \overset{p}{\longrightarrow} \mathbb{E}(w_iu_i) = 0 \\
+		&\frac{1}{n}\sum\limits_{i = 1}^nv_iu_i \overset{p}{\longrightarrow} \mathbb{E}(v_iu_i) = \rho \\
+		&\frac{1}{n}\sum\limits_{i = 1}^nw_iv_i \overset{p}{\longrightarrow} \mathbb{E}(w_iv_i) = 0 \\
+		&\frac{1}{n}\sum\limits_{i = 1}^nv_i^2 \overset{p}{\longrightarrow} \mathbb{E}(v_i^2) = 1 \\
+		\text{by CMT: }& \hat{\beta}^{OLS} - \beta \overset{p}{\longrightarrow} \frac{\sigma_u\sigma_v\rho}{\pi_0^2 + \sigma_v^2} \Longrightarrow (\hat{\beta}^{OLS} - \beta)^2 \overset{p}{\longrightarrow} \frac{\sigma_u^2\sigma_v^2\rho^2}{(\pi_0^2 + \sigma_v^2)^2}\\
+		\intertext{Similarly, for IV estimator}
+		\hat{\beta^{IV}} - \beta_0 &= \sigma_u\frac{\frac{1}{n}\sum\limits_{i = 1}^nw_iu_i}{\frac{1}{n}\sum\limits_{i = 1}^nw_ix_i} = \sigma_u\frac{\frac{1}{n}\sum\limits_{i = 1}^nw_iu_i}{\pi_0\cancelto{1}{\frac{1}{n}\sum\limits_{i = 1}^nw_i^2} + \sigma_v\frac{1}{n}\sum\limits_{i = 1}^nw_iv_i} \overset{p}{\longrightarrow} 0 \Longrightarrow (\hat{\beta^{IV}} - \beta_0)^2 \overset{p}{\longrightarrow} 0
+	\end{split}
+\end{equation}
+Hence, as sample size increases MSE of OLS estimates converges in probability to a constant non-zero value, whereas MSE of IV estimates converges in probability to zero. However, if $\rho = 0$, MSE of both estimators converges to zero. The intuition behind is that when $\rho = 0$, $x_i$ becomes an exogenous regressor and OLS estimator becomes consistent. In this case, although IV remains a consistent estimator, it is less efficient than OLS (hence, no justification for use of IV in case of exogenous regressors).
+\end{document}
