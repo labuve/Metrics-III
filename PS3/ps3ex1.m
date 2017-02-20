@@ -1,15 +1,17 @@
 clear all
 clc
 
-% Data
+% Data provided
 age = linspace(1, 9, 9);
 birds = [77, 149, 182, 118, 78, 46, 27, 10, 4];
 survive = [35, 89, 130, 79, 52, 28, 14, 3, 1];
 dead = birds - survive;
 
-X = nan(sum([survive dead]),2);
-X(1:survive(1),:)        = repmat([1,1],survive(1),1);
-X(sum(survive(:))+1:sum(survive(:))+dead(1),:)        = repmat([0,1],dead(1),1);
+% Create a data matrix with first column for the dummy variable y=1(bird
+% survives) and second column for the age
+X = nan(sum(birds),2);
+X(1:survive(1),:) = repmat([1, age(1)], survive(1), 1);
+X(sum(survive(:))+1:sum(survive(:))+dead(1),:) = repmat([0,age(1)], dead(1), 1);
 
 for i=2:length(survive)
 from1 = sum(survive(1:i-1))+1;
@@ -71,7 +73,7 @@ score.LM(1) = sum(X(:,1)) - sum((expp.res)./(1 + expp.res));
 score.LM(2) = sum(X(:,1).*X(:,2)) - sum((X(:,2).*expp.res)./(1 + expp.res));
 score.LM(3) = sum(X(:,1).*(X(:,2).^2)) - sum(((X(:,2).^2).*expp.res)./(1 + expp.res));
 
-LM.beta = score.LM*inv(VCV.res)*score.LM';
+LM.beta = score.LM*VCV.res*score.LM';
 if LM.beta > c
     disp(['LM: Reject the null H0: beta = ', num2str(beta), ...
         ' with 95% conf.level'])
@@ -125,7 +127,7 @@ score.LMbg(1) = sum(X(:,1)) - sum((expp.resbg)./(1 + expp.resbg));
 score.LMbg(2) = sum(X(:,1).*X(:,2)) - sum((X(:,2).*expp.resbg)./(1 + expp.resbg));
 score.LMbg(3) = sum(X(:,1).*(X(:,2).^2)) - sum(((X(:,2).^2).*expp.resbg)./(1 + expp.resbg));
 
-LM.bg = score.LMbg*inv(VCV.resbg)*score.LMbg';
+LM.bg = score.LMbg*VCV.resbg*score.LMbg';
 if LM.bg > c
     disp(['LM: Reject the null H0: beta*gamma = ', num2str(beta_gamma), ...
         ' with 95% conf.level'])

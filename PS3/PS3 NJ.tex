@@ -1,0 +1,242 @@
+\documentclass[]{article}
+\usepackage{amsmath, amsfonts}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{cancel}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{dcolumn}
+\usepackage{mathtools}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{cleveref}
+\usepackage{titlesec}
+\usepackage{slashbox}
+\usepackage[para,online,flushleft]{threeparttable}
+\usepackage{dsfont}
+\usepackage[backend=bibtex,style=authoryear]{biblatex}
+
+\begin{filecontents}{ps3bib.bib}
+	@article{AET_2005,
+		title = {{An Evaluation of Instrumental Variable Strategies for Estimating the Effects of Catholic Schooling}},
+		author = {Joseph G. Altonji and Todd E. Elder and Christopher R. Taber},
+		journaltitle = {The Journal of Human Resources},
+		year = {2005},
+		volume = {40},
+		issue = {4}
+	}
+\end{filecontents}
+
+\bibliography{ps3bib.bib}
+
+%opening
+\title{Problem Set III \\ \large Econometrics III}
+\author{Nurfatima Jandarova}
+\date{\today}
+\pagestyle{fancy}
+
+\lhead{Econometrics III, Problem Set III}
+\rhead{Nurfatima Jandarova}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyheadoffset{1 cm}
+
+\geometry{a4paper, left=30mm, top=30mm, bottom = 20mm, headheight=20mm}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+%\renewcommand{\thesubsection}{Exercise \arabic{subsection}}
+%\renewcommand{\thesubsubsection}{\textbf{(\alph{subsubsection})}}
+\titleformat{\subsection}[runin]
+{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}[runin]
+{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\begin{document}
+
+\maketitle
+
+\section{}
+\subsection{}
+\subsubsection{}
+\label{sec:1.1.1}
+Rewrite the probability $P(Y = 1|X)$ as
+\begin{equation}
+	P(Y = 1|X) = P(Y^*\geq 0|X) = P(\varepsilon\geq-X\theta|X) \overset{\varepsilon\perp X}{=} P(\varepsilon\geq-X\theta) = P(\varepsilon\leq X\theta) = \Phi(X\theta)\nonumber
+\end{equation}
+where $\Phi(\cdot)$ is a cdf from a standard normal distribution.
+
+Since we are given that $P(Y = 1|X)$ for every $X$, we can use the above to write
+\begin{equation}
+	\begin{split}
+		X\theta& = \Phi^{-1}(P(Y = 1|X))\nonumber \\
+		X'X\theta& = X'\Phi^{-1}(P(Y = 1|X)) \\
+		\mathbb{E}(X'X)\theta& = \mathbb{E}\left[X'\Phi^{-1}(P(Y = 1|X))\right] \Rightarrow\\
+		\theta& = \mathbb{E}(X'X)^{-1}\mathbb{E}\left[X'\Phi^{-1}(P(Y = 1|X))\right] \qquad\text{if $\mathbb{E}(X'X)$ is invertible}
+	\end{split}
+\end{equation}
+
+\subsubsection{}
+Now, the probability $P(Y = 1|X)$  is expressed as
+\begin{equation}
+	P(Y = 1|X) = P\left(\frac{\varepsilon}{\sigma_\varepsilon}\leq \frac{X\theta}{\sigma_\varepsilon}\right) = \Phi\left(\frac{X\theta}{\sigma_\varepsilon}\right)\nonumber
+\end{equation}
+If we follow the same steps as in \ref{sec:1.1.1}:
+\begin{equation}
+	\begin{split}
+		\frac{X\theta}{\sigma_\varepsilon}& = \Phi^{-1}\left(P(Y = 1|X)\right) \\ \nonumber
+		\frac{\theta}{\sigma_\varepsilon}\mathbb{E}(X'X)& = \mathbb{E}\left[X'\Phi^{-1}\left(P(Y = 1|X)\right)\right] \\
+		\underbrace{\frac{\theta}{\sigma_\varepsilon}}_{\text{unobserved}}& = \underbrace{\mathbb{E}(X'X)^{-1}\mathbb{E}\left[X'\Phi^{-1}\left(P(Y = 1|X)\right)\right]}_{\text{observed}}
+	\end{split}
+\end{equation}
+Since $\sigma_\varepsilon^2$ is unknown, we can only identify $\frac{\theta}{\sigma_\varepsilon}$, and not $\theta$ individually.
+
+\subsection{}
+Assuming that the sample is iid and using the notation given in the problem $\pi_i = P(y_i = 1|X_i)$, write the likelihood function:
+\begin{equation}
+	\begin{split}
+		L& = \prod\limits_{i = 1}^n\pi_i^{y_i}(1 - \pi_i)^{1 - y_i} \Rightarrow \\ \nonumber
+		\mathcal{L}& = \sum\limits_{i = 1}^n\left[y_i\ln(\pi_i) + (1 - y_i)\ln(1 - \pi_i)\right]
+	\end{split}
+\end{equation}
+Notice that if one assumes $\pi_i = \frac{\exp(\alpha + \beta x_i + \gamma x_i^2)}{1 + \exp(\alpha + \beta x_i + \gamma x_i^2)}$, then
+\begin{equation}
+	\begin{split}
+		\ln\left(\frac{\pi_i}{1 - \pi_i}\right)& = \ln\left(\exp(\alpha + \beta x_i + \gamma x_i^2)\right) = \alpha + \beta x_i + \gamma x_i^2 \nonumber
+	\end{split}
+\end{equation}
+which is exactly what we are given in the problem set. Substitute it in the log-likelihood to obtain
+\begin{equation}
+	\begin{split}
+		\mathcal{L}& = \sum\limits_{i = 1}^n\left[y_i\ln\left(\frac{\exp(\alpha + \beta x_i + \gamma x_i^2)}{1 + \exp(\alpha + \beta x_i + \gamma x_i^2)}\right) + (1 - y_i)\ln\left(\frac{1}{1 + \exp(\alpha + \beta x_i + \gamma x_i^2)}\right)\right] = \nonumber\\
+		& = \sum\limits_{i = 1}^n\left[y_i(\alpha + \beta x_i + \gamma x_i^2) - y_i\ln\left(1 + \exp(\alpha + \beta x_i + \gamma x_i^2)\right) - (1 - y_i)\ln\left(1 + \exp(\alpha + \beta x_i + \gamma x_i^2)\right)\right] = \\
+		& = \sum\limits_{i = 1}^n\left[y_i(\alpha + \beta x_i + \gamma x_i^2) - \ln\left(1 + \exp(\alpha + \beta x_i + \gamma x_i^2)\right)\right] \\
+		\text{FOC: }&\frac{\partial\mathcal{L}}{\partial\alpha}: \sum\limits_{i = 1}^n\left[y_i - \frac{\exp(\alpha + \beta x_i + \gamma x_i^2)}{1 + \exp(\alpha + \beta x_i + \gamma x_i^2)}\right] = 0 \\
+		&\frac{\partial\mathcal{L}}{\partial\beta}: \sum\limits_{i = 1}^n\left[y_ix_i - \frac{x_i\exp(\alpha + \beta x_i + \gamma x_i^2)}{1 + \exp(\alpha + \beta x_i + \gamma x_i^2)}\right] = 0 \\
+		&\frac{\partial\mathcal{L}}{\partial\gamma}: \sum\limits_{i = 1}^n\left[y_ix_i^2 - \frac{x_i^2\exp(\alpha + \beta x_i + \gamma x_i^2)}{1 + \exp(\alpha + \beta x_i + \gamma x_i^2)}\right] = 0 \\
+		H& = -\sum\limits_{i = 1}^n\begin{bmatrix}
+			\frac{\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2} & \frac{x_i\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2} & \frac{x_i^2\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2} \\
+			\frac{x_i\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2} & \frac{x_i^2\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2} & \frac{x_i^3\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2} \\
+			\frac{x_i^2\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2} & \frac{x_i^3\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2} & \frac{x_i^4\exp(\alpha + \beta x_i + \gamma x_i^2)}{(1 + \exp(\alpha + \beta x_i + \gamma x_i^2))^2}
+		\end{bmatrix}
+	\end{split}
+\end{equation}
+Hence, the estimate of the variance is given by $-H^{-1}$ since $AVar(\sqrt{n}(\hat{\theta} - \theta)) = -(\mathbb{E}H)^{-1}$.
+
+For the second part of the exercise, we also need to obtain the estimate of the variance of $\beta\gamma:=g(\theta)$. Notice that
+\begin{equation}
+	\begin{split}
+		g'(\theta) = \begin{bmatrix}
+			0 \\ \gamma \\ \beta
+		\end{bmatrix} \neq 0 \nonumber
+	\end{split}
+\end{equation}
+Then, according to Delta Method, $AVar(\sqrt{n}(g(\hat{\theta}) - g(\theta))) = -(g'(\theta))'(\mathbb{E}H)^{-1}g'(\theta)$. Hence, we can use 
+\begin{equation}
+	-\begin{bmatrix}
+	0 & \hat{\gamma} & \hat{\beta}
+	\end{bmatrix}H^{-1}\begin{bmatrix}
+	0 \\ \hat{\gamma} \\ \hat{\beta}
+	\end{bmatrix} \nonumber
+\end{equation}
+as the estimate of the variance of $\beta\gamma$.
+
+The test statistics computed are presented in a table below
+\begin{table}[h]
+	\centering
+	\begin{tabular}{c|ccc}
+		 & Wald test & LM test & LR test \\ \hline
+		$H0: \beta = 2$ & 60.1704 & 46.9379 & 37.8047 \\
+		$H0: \beta\gamma = \frac{1}{20}$ & 13.7725 & 8.8800e+05\footnotemark & 460.5020\footnotemark
+	\end{tabular}
+	\caption{Computed test statistics}
+	\label{tab:ex1.2teststat}
+\end{table}
+\footnotetext{Could be because the variance is so small that at small deviations the slope of the likelihood function becomes extremely steep.}
+\footnotetext{Perhaps, this is due to the fact that $loglikelihood = -678$ is wrong. With the constrained value of $\hat{\theta}$ I get a likelihood of -2.8283e+03, which is puzzling.}
+
+Since all of these test statistics are distributed according to $\chi_1^2$, all of them should be compared to the same threshold $c = 3.8415$ at 95\% confidence level. Without further delay, one can conclude that both null hypotheses could be rejected at 95\% confidence level.
+
+\section{}
+\subsection{}
+The regression results are given in \Cref{tab:ex2estmar}. Recall from lecture notes that the estimated coefficient could no longer be interpreted as marginal effects. However, in case of binary dependent variable, the sign of the estimated coefficients tells us the direction of the marginal effect. For example, probability of being arrested is negatively related to the share of reported infractions leading to an arrest.
+\begin{table}[h]
+	\centering
+	\input{ex2estmar}
+	\caption{Estimation results}
+	\label{tab:ex2estmar}
+\end{table}
+This result sounds somewhat counter intuitive. If the variable $pcnv$ reports percent of "successful" infractions up to year 1986, then it could be that a person has already been serving a sentence in 1986 for past crime (high $pcnv$), so the probability of being arrested in 1986 is lower. However, this effect should have been captured by including $ptime86$, if I understand the variable correctly. So, the estimation results are still puzzling and I have no other ideas how one could explain this.
+
+\subsection{}
+With low \% of reported infractions leading to an arrest ($pcnv = 0.25$) the probability of being arrested is 0.4, while with high \% of reported infractions leading to an arrest ($pcnv = 0.25$) the probability of being arrested falls to 0.3 (\Cref{fig:ex2predp}). Again, as noted above this could be due to a person already serving a sentence.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{ex2probit13.pdf}
+	\caption{Estimated probability of arrest at $pcnv = \{0.25, 0.75\}$}
+	\label{fig:ex2predp}
+\end{figure}
+
+\subsection{}
+The percent correctly predicted is 72.6972\%. Percent correctly predicted when $arr86 = 0$ is 96.5990\%, and when $arr86 = 1$ is 10.3311\%. So, the model is more successful in predicting probability of not being arrested, than otherwise.
+
+\subsection{}
+One can see by comparing first and third columns in \Cref{tab:ex2estmar} that the coefficients from probit and logit estimations are different in magnitude. However, the magnitudes of coefficients are uncomparable, because they assume different specification of the conditional probability. But one can see that the sign and significance of the coefficients is the same. Marginal effects from two estimations are also very close to each other. This could be due to the fact that we estimate marginal effects at the mean, where the two cdfs are more likely to have a similar slope.
+
+\subsection{}
+The marginal effects of $inc86$ are shown in \Cref{tab:ex2marinc} for $inc86 = \{50, 100, 150, 200\}$, respectively. As one can observe from the table, the marginal effect of legal income o the probability of being arrested is different at different points in the distribution of income, i.e., is not constant. This is one of the reasons to use probit/logit models instead of LPM, which explicitly assumes marginal effects are constant at all points in the distribution.
+\begin{table}[h]
+	\centering
+	\input{ex2marinc}
+	\caption{Marginal effects of $inc86$ for different values of $inc86$}
+	\label{tab:ex2marinc}
+\end{table}
+
+\subsection{}
+The estimation results of LPM both with usual (i.e., homoskedasticity assumed) and heteroskedasticity robust standard errors are reported in \Cref{tab:ex2estmar}. When using LPM, one should get robust standard errors, because the error term of linear regression model is necessarily heteroskedastic. For illustration purposes, suppose we have a binary variable $y_i$, which we try to fit with the following model: $y_i = x_i\beta + u_i$, where $x_i$ is $1\times k$ vector of regressors and $\mathbb{E}(u_i|x_i) = 0$. Then,
+\begin{equation}
+	\begin{split}
+		Var(u_i|x_i)& = \mathbb{E}(u_i^2|x_i) = \mathbb{E}((y_i - x_i\beta)^2|x_i) = \mathbb{E}(y_i^2|x_i) - 2\beta'x_i'\mathbb{E}(y_i|x_i) + x_i\beta\beta'x_i' \nonumber \\
+		& = P(y_i = 1|x_i)(1 - 2\beta'x_i') + x_i\beta\beta'x_i' = x_i\beta(1 - 2\beta'x_i') + x_i\beta\beta'x_i' \\
+		& = x_i\beta(1 - \beta'x_i')
+	\end{split}
+\end{equation}
+i.e., conditional variance of an error term is a function of $x_i \Rightarrow$ heteroskedastic.
+
+\subsection{}
+Since we have computed marginal effects in \cref{tab:ex2estmar} at mean values of variables, and cdf at the mean tends to be close to a linear function, coefficients from LPM are relatively close the computed marginal effects. What I find puzzling is that the coefficient of $inc86$ in LPM is closer to the marginal effects from probit/logit at $inc86 = 100$, despite the fact that sample mean of $inc86$ is 54.9671. Frankly, I do not know how to explain this because I would have expected again that the LPM coefficient would be closer to the marginal effect at the mean.
+
+To sum up all of the above, we have
+\begin{enumerate}[label=\roman*)]
+	\item non-constant marginal effects as witnessed from probit and logit models;
+	\item fitted probabilities from LPM lower than 0 or above 1 (\Cref{fig:ex2LPMfit});
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\textwidth]{ex2LPMfit.pdf}
+		\caption{Fitted vs. actual values of $arr86$}
+		\label{fig:ex2LPMfit}
+	\end{figure}
+	\item I have also computed \% correctly classified by LPM model using same cut-off value. Basically, employing the definitions by Stata, the predicting power of the models could be tabulated as
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{c|ccc}
+			 & Probit & Logit & LPM \\ \hline
+			Sensitivity & 10.33\% & 11.92\% & 7.68\% \\
+			Specificity & 96.60\% & 94.87\% & 97.41\% \\
+			Correctly classified & 72.70\% & 71.89\% & 72.55\%
+		\end{tabular}
+	\end{table}
+\end{enumerate}
+
+Using this information, I am more inclined to conclude that probit/logit are more appropriate to use here. In fact, the two (probit and logit) produce quite similar results with logit performing marginally better at predicting when $arr86 = 1$.
+
+\section{}
+In general, \textcite{AET_2005} are trying to assess validity of different instruments, such as proximity to Catholic schools, religious affiliation, etc., that had been used by researchers to identify the effect of Catholic schools on education quality. In particular, they observe that in some cases 2SLS estimates were much more noisy and had values hard to give economic interpretation, while probit estimations were more precise and sensible. Then, authors note that "the linearity and normality assumptions of the model are sufficient, and an exclusion restriction is not necessary." \autocite{AET_2005}.
+
+Therefore, they estimate probit model with two additional terms inside: predicted probability holding $X_i$ constant at its mean ($\Phi(\bar{X}_i\hat{\beta} + Z_i\hat{\lambda})$) and predicted probability holding the vector of instruments $Z_i$ constant at its mean ($\Phi(X_i\hat{\beta} + \bar{Z}_i\hat{\lambda})$). Therefore, if the identification comes from exclusion restriction, i.e., variation in the instrumental variables, then the coefficient in front of $\Phi(\bar{X}_i\hat{\beta} + Z_i\hat{\lambda})$ should be the same as the coefficient obtained by running the usual specification of probit. On the other hand, if the nonlinearity assumption embedded in probit is the main identification tool, then the coefficient in front of $\Phi(\bar{X}_i\hat{\beta} + Z_i\hat{\lambda})$ would differ from the usual specification of probit. By doing such comparisons, authors conclude that religious identification seems to be crucial for identification of the effect in a sample of urban white students, but not for urban minorities. In addition, other instruments do not seem powerful for either of the subsamples. This drives them to conclude that most of the identifications in probit models comes from non-linearity assumption.
+\end{document}
