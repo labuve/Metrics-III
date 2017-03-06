@@ -1,0 +1,204 @@
+\documentclass[]{article}
+\usepackage{amsmath, amsfonts}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{cancel}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{dcolumn}
+\usepackage{mathtools}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{cleveref}
+\usepackage{titlesec}
+\usepackage{slashbox}
+\usepackage[para,online,flushleft]{threeparttable}
+\usepackage{dsfont}
+\usepackage[backend=bibtex,style=authoryear]{biblatex}
+\usepackage{multirow}
+\usepackage{filecontents}
+
+%opening
+\title{Problem Set V \\ \large Econometrics III}
+\author{Nurfatima Jandarova}
+\date{\today}
+\pagestyle{fancy}
+
+\lhead{Econometrics III, Problem Set V}
+\rhead{Nurfatima Jandarova}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyheadoffset{1 cm}
+
+\geometry{a4paper, left=20mm, top=30mm, bottom = 20mm, headheight=20mm}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+%\renewcommand{\thesubsection}{Exercise \arabic{subsection}}
+%\renewcommand{\thesubsubsection}{\textbf{(\alph{subsubsection})}}
+\titleformat{\subsection}[runin]
+{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}[runin]
+{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\newcommand\insertmytabular[3][.45]%
+{%
+	{% extra group to make the redefinition of table local
+		\renewenvironment{table}[1][]{}{}
+		\begin{subtable}[b]{#1\textwidth}
+			\centering
+			\input{#2}
+			\caption{#3}
+		\end{subtable}%
+	}%
+}
+
+\begin{filecontents}{ps5bib.bib}
+	@article{AJRY_2008,
+		title = {{Income and Democracy}},
+		author = {Daron Acemoglu and Simon Johnson and James A. Robinson and Pierre Yared},
+		journaltitle = {The American Economic Review},
+		year = {2008},
+		volume = {98},
+		issue = {3},
+		pages = {808 - 842},
+	}
+\end{filecontents}
+
+\bibliography{ps5bib.bib}
+
+\begin{document}
+
+\maketitle
+\section{}
+\subsection{}
+By including ${d2}_t$ we make sure to capture the common factors that could have been affecting $y_{it}$ even in the absence of the treatment. In a sense, this makes sure we capture the aggregate trend in the economy (e.g., different stages of the business cycle at two periods of the panel data) that is assumed to be common across all cross-section units. Omitting ${d2}_t$ would make the estimate of the treatment effect biased in the same direction as the common trend. For example, if there was a general upward trend in the economy, then the estimate of the treatment effect in absence of ${d2}_t$ would have also picked up the time trend and thus be overestimated.
+
+\subsection{}
+Since nothing is said about the procedure for assignment of treatment, I would say that the main reason for including $c_i$, possibly unobservable, is to capture any potential non-randomness of the treatment assignment. Then, by either taking first differences (as below) or using fixed effects estimation, one could take care of the non-randomness such that the estimate of $\delta_1$ could be interpreted causally.
+
+\subsection{}
+Define the following objects:
+\begin{equation}
+	\begin{split}
+		N_c& = \sum\limits_{i = 1}^N\mathds{1}\{{prog}_{i2} = 0\} \\ \nonumber
+		N_t& = N - N_c \\
+		\bar{\Delta}y_{control}& = \frac{1}{N_c}\sum\limits_{i = 1}^N\left[\mathds{1}\{{prog}_{i2} = 0\}\Delta y_i\right] \\
+		\bar{\Delta}y_{treat}& = \frac{1}{N_t}\sum\limits_{i = 1}^N\left[\mathds{1}\{{prog}_{i2} = 1\}\Delta y_i\right]
+	\end{split}
+\end{equation}
+Rewrite the model in first differences:
+\begin{equation}
+	\Delta y_i = \theta_2 + \delta_1 {prog}_{i2} + \Delta u_i \nonumber
+\end{equation}
+Notice that using the assumption in the problem $\mathbb{E}(u_{it}|{prog}_{i2}, c_i) = 0$, we can also write $\mathbb{E}(\Delta u_i|{prog}_{i2}) = \mathbb{E}\left[\mathbb{E}(\Delta u_i|{prog}_{i2}, c_i)\right] = 0$. Hence, one could find the estimators $\hat{\theta}_2$ and $\hat{\delta}_1$ by minimizing $\sum\limits_{i = 1}^N\left(\Delta\hat{u}_i\right)^2$. To simplify computation slightly, I first consider subsample for which ${prog}_{i2} = 0$:
+\begin{equation}
+	\begin{split}
+		\frac{1}{N}\sum\limits_{i = 1}^N\mathds{1}\{{prog}_{i2} = 0\}\hat{\theta}_2& = \frac{1}{N}\sum\limits_{i = 1}^N\mathds{1}\{{prog}_{i2} = 0\}\Delta y_i \\
+		\hat{\theta}_2& = \frac{1}{N_c}\sum\limits_{i = 1}^N\left[\mathds{1}\{{prog}_{i2} = 0\}\Delta y_i\right] = \bar{\Delta}y_{control}\\ \nonumber
+	\end{split}
+\end{equation}
+Using this result, similarly for a subsample for which ${prog}_{i2} = 1$:
+\begin{equation}
+	\begin{split}
+		\frac{1}{N}\sum\limits_{i = 1}^N\left[\mathds{1}\{{prog}_{i2} = 1\}(\Delta y_i - \hat{\theta}_2 - \hat{\delta}_1)\right]& = 0 \\ \nonumber
+		N_t\bar{\Delta}y_{treat} - N_t\bar{\Delta}y_{control} - N_t\hat{\delta}_1& = 0 \\
+		\bar{\Delta}y_{treat} - \bar{\Delta}y_{control}& = \hat{\delta}_1
+	\end{split}
+\end{equation}
+
+\subsection{}
+\label{subsec:1.4}
+A simplest extension of the model would be to include time dummies for all additional time periods (except first since we have a constant):
+\begin{equation}
+	y_{it} = \theta_1 + \theta_2{d2}_t + ... + \theta_T{dT}_t + \delta_1{prog}_{it} + c_i + u_{it} \nonumber
+\end{equation}
+where as before ${dk}_t = \mathds{1}\{t = k\}, \forall k\in\{2, \ldots, T\}$.
+
+\subsection{}
+I would prefer the extension from \cref{subsec:1.4} because it takes into account "new information" available at time $t > 2$. One could also extend the model to allow for non-linearity in the treatment effects. On the other hand, the equation specified in the question only uses information available at time $t = 1$ and $t = 2$; hence, is inefficient. On top of that, it also restricts us to look at linear treatment effects, so another dimension in which we would be loosing information.
+
+\section{}
+\setcounter{subsection}{2}
+We are given the following model to estimate
+\begin{equation}
+	\ln(wage_{it}) = \alpha + \beta_1 educ_i + \beta_2 black_i + \beta_3 hisp_i + \beta_4 exper_{it} + \beta_5 exper_{it}^2 + \beta_6 married_{it} + \beta_7 union_{it} + \theta_t + c_i + \varepsilon_{it} \nonumber
+\end{equation}
+Since we are not given any assumption about the nature of time fixed effects, I could either introduce time dummies to stand for $\theta_t$ or a time trend (linear, for simplicity). The first option is great whenever we are not sure about the nature of time trend, and we might not be comfortable enough to assume linearity. But with $T > 2$, the time dummies reduce degrees of freedom, especially if one wants to interact regressors with time fixed effects. On the other hand, assuming a simple linear time trend may save us lots of trouble with degrees of freedom. Moreover, the sample years 1980 - 1987 seem to be safe enough to assume linearity as the time is usually referred to as Great Moderation. Therefore, in the following I will assume that the time trend is linear\footnote{I also done estimations using the dummy variables and qualitatively results seem not to change much. Although some of the coefficients do differ between the two specifications. Also, I find it a bit puzzling that the coefficients for the time dummies change considerably between RE and FE specifications, while in my opinion they shouldn't. All that FE does to the dummies is it subtracts a constant $\frac{1}{T}$ from all of them, so it should affect $\alpha$, but not the coefficient on the dummy.}.
+
+\subsection{}
+The pooled OLS estimation results are presented in columns (1) and (2) of \Cref{tab:ex2estres}. Note that we cannot rely on usual OLS standard errors because of serial correlation. Even if $\theta_t$ and $\varepsilon_{it}$ are serially uncorrelated, the presence of unobserved heterogeneity ($c_i$) introduces serial correlation of estimated error term. To see this, consider an individual $i$ at time $t$ and $s\neq t$\footnote{Assume $c_i\sim\text{i.i.d.}~\mathcal{N}(0, \sigma_c^2)$ and that $c_i$ is uncorrelated with $\varepsilon_{it}$ and $\theta_t$.}:
+\begin{equation}
+	\mathbb{E}\left[(\theta_t + c_i + \varepsilon_{it})(\theta_s + c_i + \varepsilon_{is})\right] = \mathbb{E}\left[c_i^2\right] = \sigma_c^2 > 0 \nonumber
+\end{equation}
+Hence, the estimated residuals are serially correlated. To correct for this serial correlation, one could compute clustered standard errors on the individuals (presented in column (2) of \Cref{tab:ex2estres}). One may observe that clustered errors are higher than usual standard errors, which points to a positive intracluster correlations.
+
+\begin{table}[]
+	\centering
+	\input{estres}
+	\caption{Estimation results}
+	\label{tab:ex2estres}
+\end{table}
+
+\subsection{}
+The random effect estimates are presented in column (3) of \Cref{tab:ex2estres}. The point estimates in this case are relatively similar to pooled OLS coefficients, while standard errors are typically smaller compared to clustered pooled OLS, as one might have anticipated. The differences in point estimates could be attributed to the transformation of data (weighting) involved in estimating random effects, although both methods should yield consistent estimates under assumption of strict exogeneity. However, the difference between some coefficients (e.g., on \textit{married} and \textit{union}) is beyond the 95\% confidence interval\footnote{I tried to perform Hausman test using the two regressions, but as it turns out the test is "bad" if one suspects clustered standard errors as is the case here. Unfortunately, I do not yet know a more sophisticated way to test the equality of coefficients in two regressions.}. This could in fact suggest correlation between the individual-specific effect and the regressors, which violates random effects assumption.
+
+\subsection{}
+I have $year$ to drop out of my estimation because it comes after $exper$, just a technical note. But the reason is basically that after within transformation the two variables become identical, so there is a problem of perfect collinearity and we have to drop one of them.
+
+Another "interesting"\footnote{It was sort of interesting before I realized I forgot to include time specific effects and the question why $exper$ drops out did not make sense to me.} thing to notice is that $educ_{it}$ becomes a redundant variable. Since in our model $educ$ is individual-specific and time-invariant, it got differenced out by within transformation just as $black$ and $hisp$. Comparing the coefficients in columns (3) and (4) of \Cref{tab:ex2estres}, we could see that FE point estimates of $\beta_6$ and $\beta_7$ are lower than RE, while $\beta_4$ seems to be considerably larger. This again suggests that $married$ and $union$ were correlated with individual-specific effects. Hence, now that we got rid of individual-specific effects, we also took care of the bias it created.
+
+\subsection{}
+To follow up the guess from previous sections, Hausman test allows us to test if the strict exogeneity assumption of RE is violated or not. The test statistic $\chi^2_4 = 16.64$ and p-value$ = 0.0023$. Hence, the Hausman test of fixed versus random effects suggests that the two sets of coefficients are different and that FE is preferred to RE.
+
+\subsection{}
+The first-differenced estimation results are presented in \Cref{tab:ex2estresfd}. The coefficients seem to be fairly close to the ones obtained by fixed effects estimation. The coefficient on $\Delta union$ is "lower" than in FE specification; however, the difference between the two fits into $\sim 2sd$. Still this might suggest that strict exogeneity assumption for $union$ fails.
+
+\begin{table}[h]
+	\centering
+	\input{estres_fd}
+	\caption{Estimation results: FD}
+	\label{tab:ex2estresfd}
+\end{table}
+
+\subsection{}
+I used \textit{xtserial} command that "implements a test for serial correlation in the idiosyncratic errors of a linear panel-data model discussed by Wooldridge (2002)". According to the test results below, there is an $AR(1)$ serial correlation in the error term of the first differenced regression.
+\begin{verbatim}
+	H0: no first order autocorrelation
+	F(  1,     544) =     25.372
+	Prob > F =      0.0000
+\end{verbatim}
+
+\subsection{}
+To see if the education premium somehow changed over time we need to add interaction term in our regression (column (5) of \Cref{tab:ex2estres}). The results suggest that there is no statistically significant difference in returns to education over time. However, if I include the interaction of education level with time dummies, I get that education premium was about 1.14 - 1.70pp lower in 1983 - 1986 than in 1980, considerable and statistically significant effect.
+
+\subsection{}
+The result of FE estimation with one-period lead of $union$ is presented in column (7) of \Cref{tab:ex2estres}. It suggests that the one-period lead of $union$ is statistically significant. This indeed suggests that strict exogeneity assumption on $union$ fails.
+
+\section{}
+\subsection{}
+The pooled OLS specification estimates the following regression model:
+\begin{equation}
+	d_{it} = \alpha d_{it-1} + \gamma y_{it-1} + \mathbf{x}_{it-1}'\mathbf{\beta} + \mu_t + v_{it} \nonumber
+\end{equation}
+i.e., where $v_{it} = \delta_i + u_{it}$. In this case, pooled OLS estimates are inconsistent because exogeneity assumption necessarily fails due to lagged dependent variable, $\mathbb{E}(d_{it-1}v_{it}) = \mathbb{E}(d_{it-1}(\delta_i + u_{it})) \neq 0$\footnote{With the true model as given in (1) in \textcite{AJRY_2008}, the lagged dependent variable would also be a function of $\delta_i$; thus creating a bias.}. Although, the main argument by \textcite{AJRY_2008} is that OLS is inconsistent whenever $Cov(\mathbf{x}_{it-1}', \delta_i + u_{it})\neq 0$ or $Cov(y_{it-1}', \delta_i + u_{it})\neq 0$. However, I do not quite agree because already the presence of individual-specific effects creates bias.
+
+\subsection{}
+After first differencing the model, one gets
+\begin{equation}
+	\Delta d_{it} = \alpha\Delta d_{it-1} + \gamma\Delta y_{it-1} + \Delta\mathbf{x}_{it-1}'\mathbf{\beta} + \Delta\mu_t + \Delta u_{it} \nonumber
+\end{equation}
+If the original error term $u_{it}$ is stationary, then $\Delta u_{it}$ would be serially correlated. Hence, the above model cannot be estimated consistently. However, one could use $d_{it-2}$ as an instrument for $\Delta d_{it-1}$. First, the instrument is relevant because $Cov(d_{it-2}, \Delta d_{it-1}) = Cov(d_{it-2}, d_{it-1} - d_{it-2}) = \alpha + Var(d_{it-2}) \neq 0$. Second, the instrument is exogenous
+\begin{equation}
+	\mathbb{E}(d_{it-2}, \Delta u_{it}) = \mathbb{E}(\alpha d_{it-3} + \gamma y_{it-3} + \mathbf{x}_{it-3}'\mathbf{\beta} + \mu_{t-2} + \delta_i + u_{it-2}, u_{it} - u_{it-1}) = 0 \nonumber
+\end{equation}
+under assumption that past values of regressors are not correlated with future shocks.
+
+\subsection{}
+\textcite{AJRY_2008} mention that "under the assumption of no further serial correlation", i.e., the true model indeed only has one-period lag of the dependent variable, not only $d_{it-2}$ could be used as a valid instrument, but any $d_{i\tau}, \forall \tau \leq t-2$. The intuitive argument is that by not using the rest of the lagged values, we are not using full information the sample contains. So, by taking them into account, one can significantly improve efficiency of the estimators. As to the mechanics of the process, I hope to get better understanding during the exercise class.
+\end{document}
